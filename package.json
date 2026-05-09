@@ -1,8 +1,16 @@
 {
   "name": "encore-react-router-adapter",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Encore.ts connector for React Router v7. Vite middleware mode + HMR in dev, compiled SSR build with static asset serving in production.",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/romualdr/encore-react-router-adapter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/romualdr/encore-react-router-adapter/issues"
+  },
+  "homepage": "https://github.com/romualdr/encore-react-router-adapter#readme",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
