@@ -31,7 +31,17 @@ jobs:
           registry-url: https://registry.npmjs.org
 
       - name: Ensure npm >= 11.5.1 (required for trusted publishing)
-        run: npm install -g npm@latest
+        run: |
+          REQ=11.5.1
+          CUR=$(npm -v)
+          if [ "$(printf '%s\n' "$REQ" "$CUR" | sort -V | head -n1)" = "$REQ" ]; then
+            echo "npm $CUR already meets requirement (>= $REQ)"
+          else
+            # self-upgrade can race with itself mid-install (MODULE_NOT_FOUND on
+            # promise-retry); retry once if the partial state recovers on a
+            # second pass.
+            npm install -g npm@latest || npm install -g npm@latest
+          fi
 
       - name: Install dependencies
         run: npm install --no-package-lock --no-audit --no-fund
