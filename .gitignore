@@ -2,3 +2,5 @@ dist
 node_modules
 *.tsbuildinfo
 example/bun.lock
+bun.lock
+bun.lockb
