@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "encore.dev": "^1.57.0",
-    "encore-react-router-adapter": "file:..",
+    "encore-react-router-adapter": "^0.1.2",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router": "^7.14.0"
