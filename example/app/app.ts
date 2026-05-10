@@ -1,5 +1,6 @@
 import { reactRouter } from 'encore-react-router-adapter'
 import { api } from 'encore.dev/api'
+import configuration from '../react-router.config'
 
 const getLoadContext = () => ({
   greeting: 'Hello from Encore.ts',
@@ -11,5 +12,5 @@ declare module 'react-router' {
 
 export const app = api.raw(
   { expose: true, path: '/!path', method: '*' },
-  reactRouter({ getLoadContext }),
+  reactRouter({ getLoadContext, buildDirectory: configuration.buildDirectory }),
 )

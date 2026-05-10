@@ -5,7 +5,8 @@ import type { IncomingMessage, ServerResponse } from 'node:http'
 import { join } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import sirv from 'sirv'
-import type { Logger, ViteDevServer } from 'vite'
+import { type Logger, type ViteDevServer } from 'vite'
+import { ReactRouterOptions } from './types'
 
 export const logger = (namespace: string[]) => {
   const name = namespace.join('.')
@@ -38,15 +39,52 @@ export const logger = (namespace: string[]) => {
   return _logger
 }
 
-export const readConfiguration = async (): Promise<
-  Partial<ReactRouterConfig>
-> => {
-  for (const ext of ['js', 'mjs']) {
+export const readConfiguration = async (
+  mode?: 'production',
+): Promise<Partial<ReactRouterConfig & { path: string }>> => {
+  const exts = ['js', 'mjs']
+  let loader = async (p: string) => {
+    return {
+      path: p,
+      ...((await import(pathToFileURL(p).href)).default ?? {}),
+    }
+  }
+
+  if (mode !== 'production') {
+    // we allow .ts file in development as vite can load .ts
+    const { loadConfigFromFile } = await import('vite')
+    exts.unshift(...['ts', 'mts'])
+    loader = async (p: string) => {
+      return {
+        path: p,
+        ...(((
+          await loadConfigFromFile({ command: 'serve', mode: 'development' }, p)
+        )?.config as Partial<ReactRouterConfig>) ?? {}),
+      }
+    }
+  }
+
+  for (const ext of exts) {
     const p = join(process.cwd(), `react-router.config.${ext}`)
-    if (existsSync(p))
-      return (await import(pathToFileURL(p).href)).default ?? {}
+    if (existsSync(p)) return loader(p)
   }
   return {}
+}
+
+export const getConfigurationIssues = async (options: ReactRouterOptions) => {
+  const c = await readConfiguration()
+  const warnings: string[] = []
+  if (c.buildDirectory && !options.buildDirectory && c.path?.endsWith('ts'))
+    warnings.push(
+      ...[
+        `react-router.config has buildDirectory="${c.buildDirectory}" but reactRouter()`,
+        'was called without an explicit buildDirectory option. Production will not see',
+        'this value (.ts configs are not read at runtime) and will fall back to "build".',
+        `Pass { buildDirectory: "${c.buildDirectory}" } to reactRouter() or change your`,
+        `file to .js or .mjs file to keep dev and prod in sync`,
+      ],
+    )
+  return warnings
 }
 
 export const serveStatic = (dir: string) => {

@@ -20,7 +20,9 @@ export const reactRouter = (options: ReactRouterOptions = {}) => {
   let handler: ReturnType<typeof createRequestHandler>
 
   const init = (async () => {
-    const [_build, _modeRequest] = await (isDev ? development() : production())
+    const [_build, _modeRequest] = await (isDev
+      ? development(options)
+      : production(options))
     build = _build
     modeRequest = _modeRequest
     handler = createRequestHandler(build, mode)

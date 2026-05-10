@@ -1,6 +1,6 @@
 # encore-react-router-adapter
 
-Serve a [React Router v7](https://reactrouter.com/) app with Encore.dev
+Serve a [React Router v7](https://reactrouter.com/) app with [Encore.dev](https://encore.dev)
 
 > [!WARNING]
 > **Early work-in-progress — not production-tested.** The API surface, internals, and runtime behaviour can change at any time before `1.0`. This package has not yet been validated under real production load. Use it for prototypes, side projects, and feedback — pin the exact version, expect breaking changes between minors, and don't deploy it to anything you care about. Bug reports and PRs welcome (see [CONTRIBUTING.md](./CONTRIBUTING.md)).
@@ -87,9 +87,31 @@ In development, run `encore run` and `react-router dev` side by side; in product
 
 ## Options
 
-| Option           | Type                                                              | Description                                                                    |
-| ---------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| `getLoadContext` | `(request: Request) => AppLoadContext \| Promise<AppLoadContext>` | Build a per-request load context that React Router exposes to loaders/actions. |
+| Option           | Type                                                              | Description                                                                                                                                |
+| ---------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `getLoadContext` | `(request: Request) => AppLoadContext \| Promise<AppLoadContext>` | Build a per-request load context that React Router exposes to loaders/actions.                                                             |
+| `buildDirectory` | `string`                                                          | Output dir of the React Router production build, relative to cwd. Defaults to `react-router.config.{js,mjs}.buildDirectory`, then `build`. |
+
+### `buildDirectory` and `.ts` configs
+
+In production, the adapter resolves `buildDirectory` by reading `react-router.config.{js,mjs}` with a plain `import()`. That works for compiled config files but **does not handle `react-router.config.ts`** — Node can't load `.ts` at runtime without a transpiler, and we don't ship Vite or any TS loader into the production runtime. If your config is `.ts` and uses a non-default `buildDirectory`, the adapter falls back to `build` and your prod server can't find the bundle.
+
+Pass `buildDirectory` explicitly when you have a `.ts` config. Either inline the value:
+
+```ts
+reactRouter({ buildDirectory: 'app/.build' })
+```
+
+…or import it from your config to keep a single source of truth:
+
+```ts
+import config from '../react-router.config'
+import { reactRouter } from 'encore-react-router-adapter'
+
+reactRouter({ buildDirectory: config.buildDirectory })
+```
+
+Running in dev mode also emits a `warn` if your `react-router.config.ts` declares a `buildDirectory` and you didn't pass one to `reactRouter()` — this is a heads-up for the prod failure mode before you ever hit it.
 
 ## How it works
 
