@@ -27,8 +27,11 @@ jobs:
       - name: Build lib
         run: bun run build
 
+      - name: Prepare dist manifest
+        run: bun run prepare-dist
+
       - name: Verify package contents
-        run: npm pack --dry-run
+        run: npm pack ./dist --dry-run
 
       - name: Install example dependencies
         working-directory: ./example

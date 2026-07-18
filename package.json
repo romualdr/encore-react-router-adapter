@@ -11,33 +11,21 @@
     "url": "https://github.com/romualdr/encore-react-router-adapter/issues"
   },
   "homepage": "https://github.com/romualdr/encore-react-router-adapter#readme",
+  "private": true,
   "main": "./index.ts",
-  "types": "./dist/index.d.ts",
+  "types": "./index.ts",
   "exports": {
     ".": {
-      "types": "./index.d.ts",
+      "types": "./index.ts",
       "import": "./index.ts"
     }
   },
-  "publishConfig": {
-    "main": "./dist/index.js",
-    "exports": {
-      ".": {
-        "types": "./dist/index.d.ts",
-        "import": "./dist/index.js"
-      }
-    }
-  },
-  "files": [
-    "dist",
-    "README.md",
-    "LICENSE"
-  ],
   "scripts": {
     "clean": "rm -rf dist",
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "prepublishOnly": "npm run clean && npm run build"
+    "prepare-dist": "node scripts/prepare-dist.mjs",
+    "release": "bun run clean && bun run build && bun run prepare-dist && npm publish ./dist --access public"
   },
   "keywords": [
     "encore",

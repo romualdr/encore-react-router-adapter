@@ -61,5 +61,8 @@ jobs:
       - name: Build
         run: bun run build
 
+      - name: Prepare dist manifest
+        run: bun run prepare-dist
+
       - name: Publish
-        run: npm publish --access public --tag "${{ github.event.inputs.tag || 'latest' }}"
+        run: npm publish ./dist --access public --tag "${{ github.event.inputs.tag || 'latest' }}"
