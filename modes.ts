@@ -20,7 +20,6 @@ export const development = async (options: ReactRouterOptions = {}) => {
     mode: 'development',
   })
   const vite = await _vite.createServer({
-    ..._viteConfiguration?.config,
     customLogger: log.sublogger('vite'),
     server: {
       ...(_viteConfiguration?.config?.server ?? {}),
