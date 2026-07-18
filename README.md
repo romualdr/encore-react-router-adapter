@@ -1,6 +1,6 @@
 # encore-react-router-adapter
 
-Serve a [React Router v7](https://reactrouter.com/) app with [Encore.dev](https://encore.dev)
+Serve a [React Router](https://reactrouter.com/) v7 or v8 app with [Encore.dev](https://encore.dev)
 
 > [!WARNING]
 > **Early work-in-progress — not production-tested.** The API surface, internals, and runtime behaviour can change at any time before `1.0`. This package has not yet been validated under real production load. Use it for prototypes, side projects, and feedback — pin the exact version, expect breaking changes between minors, and don't deploy it to anything you care about. Bug reports and PRs welcome (see [CONTRIBUTING.md](./CONTRIBUTING.md)).
@@ -23,7 +23,7 @@ Serve a [React Router v7](https://reactrouter.com/) app with [Encore.dev](https:
 
 ### Scaffold a new app
 
-The fastest way to start is to copy the bundled [`example/`](./example) — a working Encore.ts + React Router v7 app — into a new directory:
+The fastest way to start is to copy the bundled [`example/`](./example) — a working Encore.ts + React Router app — into a new directory:
 
 ```bash
 npx degit romualdr/encore-react-router-adapter/example my-app
@@ -89,7 +89,7 @@ In development, run `encore run` and `react-router dev` side by side; in product
 
 | Option           | Type                                                              | Description                                                                                                                                |
 | ---------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| `getLoadContext` | `(request: Request) => AppLoadContext \| Promise<AppLoadContext>` | Build a per-request load context that React Router exposes to loaders/actions.                                                             |
+| `getLoadContext` | `(request: Request) => LoadContext \| Promise<LoadContext>`      | Build a per-request load context React Router exposes to loaders/actions. On v7, return a plain `AppLoadContext` object; on v8, return a `RouterContextProvider` (middleware is always enabled). |
 | `buildDirectory` | `string`                                                          | Output dir of the React Router production build, relative to cwd. Defaults to `react-router.config.{js,mjs}.buildDirectory`, then `build`. |
 
 ### `buildDirectory` and `.ts` configs
@@ -126,7 +126,7 @@ In both modes, requests that don't match a static or Vite asset fall through to 
 
 - Node.js ≥ 20
 - `encore.dev` ≥ 1.57
-- `react-router` ^7
+- `react-router` ^7 or ^8
 
 ## Contributing
 
